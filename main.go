@@ -59,7 +59,6 @@ func main() {
 		case _ = <-ticker:
 			log("start new check")
 			checkAndValidate()
-			time.Sleep(10 * time.Second)
 			log("check finished")
 		default:
 
