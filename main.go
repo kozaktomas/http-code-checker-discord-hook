@@ -58,19 +58,22 @@ func main() {
 			return
 		case _ = <-ticker:
 			log("start new check")
-			checkAndValidate()
+			match := checkAndValidate()
 			log("check finished")
-		default:
-
+			if match {
+				log("Expected status code returned. Quiting.")
+				return
+			}
 		}
 	}
 }
 
-func checkAndValidate() {
+// returns true when condition pass and program should quit
+func checkAndValidate() bool {
 	c, err := checkUrl()
 	if err != nil {
 		log("could not check url")
-		return
+		return false
 	}
 
 	// expected code match
@@ -79,8 +82,13 @@ func checkAndValidate() {
 		err = sendWebhook()
 		if err != nil {
 			log(err.Error())
+			return false
 		}
+
+		return true
 	}
+
+	return false
 }
 
 func checkUrl() (int, error) {
