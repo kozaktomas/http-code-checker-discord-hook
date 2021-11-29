@@ -24,3 +24,8 @@ Args:
 ```bash
 http-code-checker-discord-hook --sleep="5m" https://google.com 200 https://discord.com/api/webhooks/xyz/xyz
 ```
+
+## Docker
+```
+docker run ghcr.io/kozaktomas/http-code-checker-discord-hook:latest --help
+```
