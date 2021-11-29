@@ -32,12 +32,14 @@ func main() {
 		return
 	}
 
+	// parse sleep duration - time between checks
 	duration, err := time.ParseDuration(*sleep)
 	if err != nil {
 		fmt.Println(fmt.Sprintf("could not parse sleep duration %s", *sleep))
 		return
 	}
 
+	// generate tick for every check
 	ticker := make(chan interface{})
 	go func() {
 		for {
@@ -47,9 +49,11 @@ func main() {
 		}
 	}()
 
+	// receive cancellation signals using channel
 	cancel := make(chan os.Signal, 1)
 	signal.Notify(cancel, syscall.SIGINT, syscall.SIGTERM, syscall.SIGKILL)
 
+	// process ticks and cancellation signals
 	for {
 		select {
 		case _ = <-cancel:
@@ -68,6 +72,7 @@ func main() {
 	}
 }
 
+// checkAndValidate checks requested url and return if the condition pass
 // returns true when condition pass and program should quit
 func checkAndValidate() bool {
 	c, err := checkUrl()
@@ -91,6 +96,7 @@ func checkAndValidate() bool {
 	return false
 }
 
+// checkUrl checks requested url and returns status_code and error
 func checkUrl() (int, error) {
 	resp, err := http.Get(*url)
 	if err != nil {
@@ -100,6 +106,8 @@ func checkUrl() (int, error) {
 	return resp.StatusCode, nil
 }
 
+// sendWebhook sends Discord webhook
+// Discord shows message in channel related to the webhook
 func sendWebhook() error {
 	body := struct {
 		Content string `json:"content"`
